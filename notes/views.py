@@ -75,7 +75,6 @@ def notes_list(request):
     if priority:
         notes = notes.filter(priority=priority)
 
-    # status filters
     if status == "favorite":
         notes = notes.filter(is_favorite=True)
 
@@ -85,7 +84,6 @@ def notes_list(request):
     elif status == "archived":
         notes = notes.filter(is_archived=True)
 
-    # sorting
     if sort == "oldest":
         notes = notes.order_by("created_at")
     else:
@@ -93,7 +91,7 @@ def notes_list(request):
 
     context = {
         "notes": notes,
-        "categories": Category.objects.all(),  # FIXED (no user field in model)
+        "categories": Category.objects.all(),
         "search": search,
         "selected_category": category,
         "selected_priority": priority,
@@ -156,7 +154,7 @@ def trash_list(request):
 
 
 # ==========================
-# RESTORE FROM TRASH
+# RESTORE NOTE
 # ==========================
 @login_required
 def restore_note(request, pk):
@@ -171,9 +169,8 @@ def restore_note(request, pk):
 
 
 # ==========================
-# QUICK ACTIONS (Phase 6 CORE)
+# QUICK ACTIONS
 # ==========================
-
 @login_required
 def toggle_pin(request, pk):
 
