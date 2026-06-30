@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Dashboard | Notes App{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- Welcome Section -->
+    <div class="card border-0 shadow-sm bg-primary text-white mb-4">
+
+        <div class="card-body d-flex flex-column flex-lg-row justify-content-between align-items-center">
+
+            <div>
+
+                <h2 class="fw-bold mb-2">
+                    👋 Welcome, {{ user.username }}
+                </h2>
+
+                <p class="mb-0">
+                    Manage all your notes in one secure place.
+                </p>
+
+            </div>
+
+            <div class="mt-3 mt-lg-0">
+
+                <a href="{% url 'create_note' %}" class="btn btn-light me-2">
+                    <i class="bi bi-plus-circle"></i> Add Note
+                </a>
+
+                <a href="{% url 'note_list' %}" class="btn btn-outline-light">
+                    <i class="bi bi-journal-text"></i> View Notes
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Search -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="input-group">
+
+                <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Search your notes...">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Statistics -->
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-3">
+            <div class="card shadow border-0 bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-journal-richtext display-5"></i>
+                    <h5 class="mt-2">Total Notes</h5>
+                    <h2>{{ total_notes }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow border-0 bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-pin-angle-fill display-5"></i>
+                    <h5 class="mt-2">Pinned</h5>
+                    <h2>{{ pinned_notes }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow border-0 bg-warning text-dark">
+                <div class="card-body text-center">
+                    <i class="bi bi-star-fill display-5"></i>
+                    <h5 class="mt-2">Favorites</h5>
+                    <h2>{{ favorite_notes }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow border-0 bg-danger text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-archive-fill display-5"></i>
+                    <h5 class="mt-2">Archived</h5>
+                    <h2>{{ archived_notes }}</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Recent Notes -->
+    <div class="card shadow border-0">
+
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+
+            <h4 class="mb-0">📝 Recent Notes</h4>
+
+            <a href="{% url 'note_list' %}" class="btn btn-sm btn-primary">
+                View All
+            </a>
+
+        </div>
+
+        <div class="card-body">
+
+            {% if recent_notes %}
+
+            <div class="row">
+
+                {% for note in recent_notes %}
+
+                <div class="col-lg-6 mb-4">
+
+                    <div class="card h-100 shadow-sm border">
+
+                        <div class="card-body">
+
+                            <!-- Title -->
+                            <div class="d-flex justify-content-between align-items-start">
+
+                                <h5 class="fw-bold">
+                                    {{ note.title }}
+                                </h5>
+
+                                {% if note.is_pinned %}
+                                <span class="badge bg-primary">📌</span>
+                                {% endif %}
+
+                            </div>
+
+                            <!-- Content -->
+                            <p class="text-muted">
+                                {{ note.content|truncatewords:25 }}
+                            </p>
+
+                            <!-- Badges -->
+                            <div class="mb-3">
+
+                                {% if note.category %}
+                                <span class="badge bg-info">
+                                    {{ note.category }}
+                                </span>
+                                {% endif %}
+
+                                <span class="badge bg-secondary">
+                                    {{ note.priority }}
+                                </span>
+
+                                {% if note.is_favorite %}
+                                <span class="badge bg-warning text-dark">
+                                    ⭐ Favorite
+                                </span>
+                                {% endif %}
+
+                                {% if note.is_archived %}
+                                <span class="badge bg-dark">
+                                    📦 Archived
+                                </span>
+                                {% endif %}
+
+                            </div>
+
+                            <small class="text-muted">
+                                Last Updated: {{ note.updated_at|date:"d M Y, h:i A" }}
+                            </small>
+
+                            <hr>
+
+                            <!-- ACTION BUTTONS (UPDATED) -->
+                            <div class="d-flex flex-wrap gap-2">
+
+                                <!-- EDIT -->
+                                <a href="{% url 'edit_note' note.id %}"
+                                   class="btn btn-sm btn-outline-success">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+
+                                <!-- DELETE -->
+                                <a href="{% url 'delete_note' note.id %}"
+                                   class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+
+                                <!-- PIN -->
+                                <a href="{% url 'toggle_pin' note.id %}"
+                                   class="btn btn-sm btn-outline-primary">
+                                    📌 Pin
+                                </a>
+
+                                <!-- FAVORITE -->
+                                <a href="{% url 'toggle_favorite' note.id %}"
+                                   class="btn btn-sm btn-outline-warning">
+                                    ⭐ Fav
+                                </a>
+
+                                <!-- ARCHIVE -->
+                                <a href="{% url 'toggle_archive' note.id %}"
+                                   class="btn btn-sm btn-outline-dark">
+                                    📦 Archive
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <!-- EMPTY STATE -->
+            <div class="text-center py-5">
+
+                <i class="bi bi-journal-x display-1 text-secondary"></i>
+
+                <h3 class="mt-3">No Notes Yet</h3>
+
+                <p class="text-muted">
+                    Start by creating your first note.
+                </p>
+
+                <a href="{% url 'create_note' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create First Note
+                </a>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
