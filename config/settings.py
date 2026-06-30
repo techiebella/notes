@@ -14,17 +14,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -------------------------------------------------
 # SECURITY
 # -------------------------------------------------
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-dev-key")
 
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "https://notes-uo7q.onrender.com",
+    "notes-uo7q.onrender.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    "https://notes-uo7q.onrender.com",
     "https://*.onrender.com",
 ]
 
@@ -49,8 +50,6 @@ INSTALLED_APPS = [
 # -------------------------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-
-    # WhiteNoise (must be just after SecurityMiddleware)
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -90,7 +89,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # -------------------------------------------------
-# DATABASE (SQLite for local, PostgreSQL for production)
+# DATABASE
 # -------------------------------------------------
 DATABASES = {
     'default': dj_database_url.config(
@@ -122,8 +121,6 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 STORAGES = {
     "staticfiles": {
