@@ -16,11 +16,6 @@ A modern and feature-rich Notes Management Web Application built with Django.
 
 ---
 
-# 🚀 Live Demo
-
-🌐 **https://notes-uo7q.onrender.com**
-
----
 
 # ✨ Features
 
