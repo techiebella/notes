@@ -1,37 +1,36 @@
 """
-Django settings for config project.
+Django settings for config project (Production Ready).
 """
 
 import os
 from pathlib import Path
+import dj_database_url
 
 # -------------------------------------------------
-# Base Directory
+# BASE DIRECTORY
 # -------------------------------------------------
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # -------------------------------------------------
-# Security
+# SECURITY
 # -------------------------------------------------
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
-SECRET_KEY = os.environ.get(
-    "SECRET_KEY",
-    "django-insecure-*rnvxqlthwys5&fm52_-#5s1671&6m-!$i_s&u-c(je*b+97pm"
-)
-
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = [
-    ".onrender.com",
-    "127.0.0.1",
     "localhost",
+    "127.0.0.1",
+    ".onrender.com",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.onrender.com",
 ]
 
 # -------------------------------------------------
-# Installed Apps
+# APPLICATIONS
 # -------------------------------------------------
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,17 +39,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Your apps
     'notes',
     'accounts',
 ]
 
 # -------------------------------------------------
-# Middleware
+# MIDDLEWARE
 # -------------------------------------------------
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
 
+    # WhiteNoise (must be just after SecurityMiddleware)
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -62,25 +62,18 @@ MIDDLEWARE = [
 ]
 
 # -------------------------------------------------
-# URLs
+# URL CONFIG
 # -------------------------------------------------
-
 ROOT_URLCONF = 'config.urls'
 
 # -------------------------------------------------
-# Templates
+# TEMPLATES
 # -------------------------------------------------
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-
-        'DIRS': [
-            BASE_DIR / "templates",
-        ],
-
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
-
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
@@ -94,62 +87,43 @@ TEMPLATES = [
 # -------------------------------------------------
 # WSGI
 # -------------------------------------------------
-
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # -------------------------------------------------
-# Database
+# DATABASE (SQLite for local, PostgreSQL for production)
 # -------------------------------------------------
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+    )
 }
 
 # -------------------------------------------------
-# Password Validation
+# PASSWORD VALIDATION
 # -------------------------------------------------
-
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 # -------------------------------------------------
-# Internationalization
+# INTERNATIONALIZATION
 # -------------------------------------------------
-
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
-
 USE_TZ = True
 
 # -------------------------------------------------
-# Static Files
+# STATIC FILES (WHITE NOISE)
 # -------------------------------------------------
-
 STATIC_URL = "static/"
-
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
-
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 STORAGES = {
     "staticfiles": {
@@ -158,14 +132,21 @@ STORAGES = {
 }
 
 # -------------------------------------------------
-# Media Files
+# MEDIA FILES
 # -------------------------------------------------
-
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # -------------------------------------------------
-# Default Primary Key
+# DEFAULT AUTO FIELD
 # -------------------------------------------------
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# -------------------------------------------------
+# SECURITY HEADERS (PRODUCTION)
+# -------------------------------------------------
+if not DEBUG:
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
