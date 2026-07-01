@@ -16,6 +16,14 @@ A modern and feature-rich Notes Management Web Application built with Django.
 
 ---
 
+# 🚀 Live Demo
+
+🌐 **Website:** https://notes-uo7q.onrender.com/
+
+> **Try the application here:**  
+> https://notes-uo7q.onrender.com/
+
+---
 
 # ✨ Features
 
@@ -173,7 +181,6 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-
 ---
 
 # 🚀 Future Enhancements
@@ -199,6 +206,14 @@ python manage.py runserver
 # 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome.
+
+If you'd like to contribute:
+
+1. Fork the repository
+2. Create a new feature branch
+3. Commit your changes
+4. Push to your branch
+5. Open a Pull Request
 
 ---
 
